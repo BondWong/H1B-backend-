@@ -22,12 +22,11 @@ public class Position {
 
 	}
 
-	public Position(String name, String salary, String visaType, String state, String city, String zipCode,
-			String street) {
+	public Position(String name, String salary, String visaType, String state, String city, String zipCode) {
 		this.name = name;
 		this.salary = salary;
 		this.visaType = visaType;
-		Address address = new Address(state, city, zipCode, street);
+		Address address = new Address(state, city, zipCode, "");
 		this.address = address;
 	}
 

@@ -47,9 +47,8 @@ public class PositionService {
 	@RequestMapping(value = "position/title/{title:.+}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByTitle(@PathVariable("title") String title,
 			@PathVariable("start") int start) {
-		title = title.toLowerCase();
 		Pageable pageable = new PageRequest(start, PAGESIZE);
-		List<Position> data = repository.fetchByTitle(title, pageable);
+		List<Position> data = repository.fetchByTitle("(?i).*" + title + ".*", pageable);
 		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(data.iterator()), start,
 				PAGESIZE, data.size() == PAGESIZE);
 		return ResponseEntity.ok(result);
@@ -58,10 +57,9 @@ public class PositionService {
 	@RequestMapping(value = "position/title/{title:.+}/address/{address:\\w{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByTitleAndLocation(@PathVariable("title") String title,
 			@PathVariable("address") String address, @PathVariable("start") int start) {
-		title = title.toLowerCase();
-		address = address.toLowerCase();
 		Pageable pageable = new PageRequest(start, PAGESIZE);
-		List<Position> data = repository.fetchByTitleAndLocation(title, address, pageable);
+		List<Position> data = repository.fetchByTitleAndLocation("(?i).*" + title + ".*", "(?i).*" + address + ".*",
+				pageable);
 		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(data.iterator()), start,
 				PAGESIZE, data.size() == PAGESIZE);
 		return ResponseEntity.ok(result);
@@ -70,9 +68,8 @@ public class PositionService {
 	@RequestMapping(value = "position/address/{address:\\w{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByLocation(@PathVariable("address") String address,
 			@PathVariable("start") int start) {
-		address = address.toLowerCase();
 		Pageable pageable = new PageRequest(start, PAGESIZE);
-		List<Position> data = repository.fetchByLocation(address, pageable);
+		List<Position> data = repository.fetchByLocation("(?i).*" + address + ".*", pageable);
 		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(data.iterator()), start,
 				PAGESIZE, data.size() == PAGESIZE);
 		return ResponseEntity.ok(result);
@@ -81,9 +78,8 @@ public class PositionService {
 	@RequestMapping(value = "position/company/{company:.{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByCompany(@PathVariable("company") String company,
 			@PathVariable("start") int start) {
-		company = company.toLowerCase();
 		Pageable pageable = new PageRequest(start, PAGESIZE);
-		List<Position> data = repository.fetchByCompany(company, pageable);
+		List<Position> data = repository.fetchByCompany("(?i).*" + company + ".*", pageable);
 		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(data.iterator()), start,
 				PAGESIZE, data.size() == PAGESIZE);
 		return ResponseEntity.ok(result);

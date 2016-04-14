@@ -13,15 +13,15 @@ import com.jh.honeb.domain.Position;
 @Repository
 @Transactional
 public interface PositionRepository extends GraphRepository<Position> {
-	@Query("match (p: Position {name: {0}}) return p")
+	@Query("match (p: Position) where p.name =~ {0} return p")
 	List<Position> fetchByTitle(String title, Pageable pageable);
 
-	@Query("match (p: Position {name: {0}}) -[:at]-> (a: Address) where a.city = {1} or a.state = {1} return p")
+	@Query("match (p: Position) -[:at]-> (a: Address) where p.name =~ {0} and (a.city =~ {1} or a.state =~ {1}) return p")
 	List<Position> fetchByTitleAndLocation(String title, String address, Pageable pageable);
 
-	@Query("match (p: Position) -[:at]-> (a: Address) where a.city = {1} or a.state = {1} return p")
+	@Query("match (p: Position) -[:at]-> (a: Address) where a.city =~ {0} or a.state =~ {0} return p")
 	List<Position> fetchByLocation(String address, Pageable pageable);
 
-	@Query("match (p: Position) -[:of]-> (c: Company {name: {0}}) return p")
+	@Query("match (p: Position) -[:of]-> (c: Company) where c.name =~ {0} return p")
 	List<Position> fetchByCompany(String company, Pageable pageable);
 }

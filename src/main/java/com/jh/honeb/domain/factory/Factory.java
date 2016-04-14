@@ -27,7 +27,7 @@ public class Factory {
 		Company company = new Company(data.get("name"), data.get("contact"), data.get("state"), data.get("city"),
 				data.get("zipCode"), data.get("street"));
 		Position position = new Position(data.get("title"), data.get("salary"), data.get("visaType"),
-				data.get("workState"), data.get("workCity"), data.get("workZipCode"), data.get("workStreet"));
+				data.get("workState"), data.get("workCity"), data.get("workZipCode"));
 		position.setCompany(company);
 		return position;
 	}

@@ -1,81 +1,65 @@
-#!/usr/bin/env python
-import sys
-from openpyxl import load_workbook
-import threading
+#!/usr/bin/env python3
 
-task_num_per_consumer = 100
-row_num_in_task = 60
-
-def main():
-    filePath = sys.argv[1]
-    tasks = {}
-    condition = threading.Condition()
-    wb = load_workbook(filePath, read_only=True)
-    sheet = wb.worksheets[0]
-    row_count = sheet.max_row
-
-    producer = TaskCreater(tasks, filePath, condition, row_count, row_num_in_task)
-    producer.start()
-    producer.join()
-
-    consumers = []
-    while True:
-        task_num = task_num_per_consumer if task_num_per_consumer * row_num_in_task <= row_count else 1 
-        consumer = TaskHandler(tasks, condition, task_num)
-        consumer.start()
-        consumer.join()
-        consumers.append(consumer)
-        row_count -= task_num * row_num_in_task
-
-        if row_count <= 0:
-            break
-
-class TaskCreater(threading.Thread):
-    def __init__(self, tasks, filePath, condition, task_num, row_num_in_task):
-        threading.Thread.__init__(self)
-        self.tasks = tasks
-        self.condition = condition
-        self.filePath = filePath
-        self.task_num = task_num
-        self.row_num_in_task = row_num_in_task
-
-    def run(self):
-        for i in range(2, self.task_num, self.row_num_in_task):
-            start = i
-            end = i + self.row_num_in_task if i + self.row_num_in_task <= self.task_num else self.task_num 
-            self.condition.acquire()
-            self.tasks[len(self.tasks)] = {"id": len(self.tasks), "start": start, "end": end, "isHandled": False}
-            self.condition.notify()
-            self.condition.release()
-        
-class TaskHandler(threading.Thread):
-    def __init__(self, tasks, condition, task_num):
-        threading.Thread.__init__(self)
-        self.tasks = tasks
-        self.condition = condition
-        self.task_num = task_num
+if __name__ == "__main__":
+    import sys
+    from openpyxl import load_workbook
+    from concurrent.futures import ThreadPoolExecutor
+    from openpyxl.cell import get_column_letter
+    import requests
+    import json
+    from requester import post
     
-    def run(self):
-        for i in range(self.task_num):
-            self.condition.acquire()
-            if len(self.tasks) == 0:
-                self.condition.wait()
-            
-            task = None
-            for t in self.tasks.values():
-                if t["isHandled"] == False:
-                    task = t
-                    t["isHandled"] = True
-                    break
-            self.condition.release()
+    # open excel
+    filePath = sys.argv[1]
+    url = sys.argv[2]
+    tasks = {}
+    wb = load_workbook(filePath, read_only=True)
+    ws = wb.worksheets[0]
 
-            # create
-            print task
+    # read data into memory and send 
+    data = []
+    i = 2
+    with ThreadPoolExecutor(64) as pool:
+        for row in ws.iter_rows(row_offset = 2):
+            if not ws['E' + str(i)].value == "H-1B":
+                i += 1
+                continue
+            i += 1
 
-            if task:
-                self.condition.acquire()
-                del self.tasks[task["id"]]
-                self.condition.release()
+            d = {"name": "", "contact": "", "state": "", "city": "", "zipCode": "", "street": "", "title": "", "salary": "", "visaType": "H-1B", "workState": "", "workCity":"",  "workZipCode": ""}
+            for cell in row:
+                if not cell.value:
+                    continue
 
-            
-main()
+                col = get_column_letter(cell.column)
+                if col == "H":
+                    d["name"] = cell.value
+                elif col == "I":
+                    d["street"] = cell.value
+                elif col == "K":
+                    d["city"] = cell.value
+                elif col == "L":
+                    d["state"] = cell.value
+                elif col == "M":
+                    d["zipCode"] = cell.value
+                elif col == "P":
+                    d["contact"] = cell.value
+                elif col == "U":
+                    d["title"] = cell.value
+                elif col == "AA":
+                    d["salary"] = "$" + cell.value
+                elif col == "AB":
+                    d["salary"] += "/" + cell.value
+                elif col == "AK":
+                    d["workCity"] = cell.value
+                elif col == "AM":
+                    d["workState"] = cell.value
+                elif col == "AN":
+                    d["workZipCode"] = cell.value
+            if len(data) < 10:
+                data.append(d)
+            else:
+                #requests.post(url, json.dumps(data), headers = {"Content-Type": "application/json"})
+                pool.submit(post, url, data)
+                data = []
+

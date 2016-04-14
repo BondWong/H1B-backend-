@@ -1,6 +1,7 @@
 package com.jh.honeb.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -8,6 +9,7 @@ import org.neo4j.ogm.annotation.Relationship;
 public class Company {
 	@GraphId
 	private Long ID;
+	@Index
 	private String name;
 	@Relationship(type = "at")
 	private Address address;
