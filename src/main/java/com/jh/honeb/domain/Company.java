@@ -1,7 +1,9 @@
 package com.jh.honeb.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -9,11 +11,12 @@ import org.neo4j.ogm.annotation.Relationship;
 public class Company {
 	@GraphId
 	private Long ID;
-	@Index
 	private String name;
 	@Relationship(type = "at")
 	private Address address;
 	private String contact;
+	@Relationship(type = "has")
+	private List<Position> positions;
 
 	public Company() {
 	}
@@ -22,6 +25,7 @@ public class Company {
 		this.name = name;
 		this.contact = contact;
 		this.address = new Address(state, city, zipCode, street);
+		this.positions = new ArrayList<Position>();
 	}
 
 	public String getName() {
@@ -38,6 +42,20 @@ public class Company {
 
 	public Address getAddress() {
 		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public void addPosition(Position positoin) {
+		if (this.positions == null)
+			this.positions = new ArrayList<Position>();
+		this.positions.add(positoin);
+	}
+
+	public void setPositions(List<Position> positions) {
+		this.positions = positions;
 	}
 
 	public boolean equals(Object obj) {

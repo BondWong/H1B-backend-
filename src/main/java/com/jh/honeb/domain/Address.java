@@ -1,16 +1,13 @@
 package com.jh.honeb.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 @NodeEntity
 public class Address {
 	@GraphId
 	private Long ID;
-	@Index
 	private String state;
-	@Index
 	private String city;
 	private String zipCode;
 	private String street;

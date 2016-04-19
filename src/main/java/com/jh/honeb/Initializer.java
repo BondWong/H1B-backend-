@@ -2,6 +2,8 @@ package com.jh.honeb;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.jh.honeb.RootConfig;
+
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override

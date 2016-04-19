@@ -1,7 +1,6 @@
 package com.jh.honeb.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -9,7 +8,6 @@ import org.neo4j.ogm.annotation.Relationship;
 public class Position {
 	@GraphId
 	private Long ID;
-	@Index
 	private String name;
 	private String salary;
 	private String visaType;
@@ -28,6 +26,10 @@ public class Position {
 		this.visaType = visaType;
 		Address address = new Address(state, city, zipCode, "");
 		this.address = address;
+	}
+	
+	public Long getID() {
+		return ID;
 	}
 
 	public String getName() {
