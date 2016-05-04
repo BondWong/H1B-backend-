@@ -56,7 +56,7 @@ if __name__ == "__main__":
                     continue;
             
             data.append(d)
-            if len(data) >= 10:
+            if len(data) >= 1000:
                 pool.submit(post, url, data)
                 data = []
                 print(i)
