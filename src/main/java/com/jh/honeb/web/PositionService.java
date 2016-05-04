@@ -42,6 +42,7 @@ public class PositionService {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "position", consumes = MediaType.APPLICATION_JSON_VALUE, method = POST)
 	public ResponseEntity<Void> create(@RequestBody List<Map<String, String>> data) {
+		System.out.println(data);
 		List<Position> positions = new ArrayList<Position>();
 		List<Company> updatedCompanies = new ArrayList<Company>();
 		Set<NameTuple> isVisited = new HashSet<NameTuple>();
@@ -50,7 +51,7 @@ public class PositionService {
 			if (isVisited.contains(nt))
 				continue;
 			isVisited.add(nt);
-			
+
 			List<Map<String, Object>> tuples = cRepository.fetchPositions(d.get("name"));
 			if (tuples == null || tuples.size() == 0) {
 				Position position = PositionFactory.newInstance().create(d);
@@ -82,7 +83,7 @@ public class PositionService {
 			company.addPosition(position);
 			updatedCompanies.add(company);
 		}
-		
+
 		repository.save(positions);
 		cRepository.save(updatedCompanies);
 		return ResponseEntity.ok().build();
@@ -103,7 +104,7 @@ public class PositionService {
 		return ResponseEntity.ok(result);
 	}
 
-	@RequestMapping(value = "position/title/{title:.+}/address/{address:\\w{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
+	@RequestMapping(value = "position/title/{title:.+}/address/{address:.{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByTitleAndLocation(@PathVariable("title") String title,
 			@PathVariable("address") String address, @PathVariable("start") int start) {
 		List<Map<String, Object>> data = repository.fetchByTitleAndLocation("(?i).*" + title + ".*",
@@ -114,7 +115,7 @@ public class PositionService {
 		return ResponseEntity.ok(result);
 	}
 
-	@RequestMapping(value = "position/address/{address:\\w{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
+	@RequestMapping(value = "position/address/{address:.{1,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
 	public ResponseEntity<CollectionResult<Position>> getByLocation(@PathVariable("address") String address,
 			@PathVariable("start") int start) {
 		List<Map<String, Object>> data = repository.fetchByLocation("(?i).*" + address + ".*", start, PAGESIZE);

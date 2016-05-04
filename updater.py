@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # read data into memory and send 
     data = []
     i = 2
-    with ThreadPoolExecutor(1024) as pool:
+    with ThreadPoolExecutor(128) as pool:
         for row in ws.iter_rows(row_offset = 2):
             i += 1
             d = {"name": "", "contact": "", "state": "", "city": "", "zipCode": "", "street": "", "title": "", "salary": "", "visaType": "H-1B", "workState": "", "workCity":"",  "workZipCode": ""}
