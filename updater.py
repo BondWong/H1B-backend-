@@ -19,13 +19,9 @@ if __name__ == "__main__":
     # read data into memory and send 
     data = []
     i = 2
-    with ThreadPoolExecutor(64) as pool:
+    with ThreadPoolExecutor(1024) as pool:
         for row in ws.iter_rows(row_offset = 2):
-            if not ws['E' + str(i)].value == "H-1B":
-                i += 1
-                continue
             i += 1
-
             d = {"name": "", "contact": "", "state": "", "city": "", "zipCode": "", "street": "", "title": "", "salary": "", "visaType": "H-1B", "workState": "", "workCity":"",  "workZipCode": ""}
             for cell in row:
                 if not cell.value:
@@ -56,10 +52,12 @@ if __name__ == "__main__":
                     d["workState"] = cell.value
                 elif col == "AN":
                     d["workZipCode"] = cell.value
-            if len(data) < 10:
-                data.append(d)
-            else:
-                #requests.post(url, json.dumps(data), headers = {"Content-Type": "application/json"})
+                elif col == "E" and cell.value != "H-1B":
+                    continue;
+            
+            data.append(d)
+            if len(data) >= 10:
                 pool.submit(post, url, data)
                 data = []
+                print(i)
 
