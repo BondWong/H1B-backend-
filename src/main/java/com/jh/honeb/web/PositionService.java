@@ -42,7 +42,6 @@ public class PositionService {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "position", consumes = MediaType.APPLICATION_JSON_VALUE, method = POST)
 	public ResponseEntity<Void> create(@RequestBody List<Map<String, String>> data) {
-		System.out.println(data);
 		List<Position> positions = new ArrayList<Position>();
 		List<Company> updatedCompanies = new ArrayList<Company>();
 		Set<NameTuple> isVisited = new HashSet<NameTuple>();
@@ -132,6 +131,21 @@ public class PositionService {
 		List<Position> positions = toPositions(data);
 		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(positions.iterator()),
 				start, PAGESIZE, data.size() == PAGESIZE);
+		return ResponseEntity.ok(result);
+	}
+
+	@RequestMapping(value = "position/keyword/{keyword:.{0,}}/{location:.{0,}}/{start:\\d{1,}}", produces = MediaType.APPLICATION_JSON_VALUE, method = GET)
+	public ResponseEntity<CollectionResult<Position>> fetchFromGlassdoor(@PathVariable("keyword") String keyword,
+			@PathVariable("location") String location, @PathVariable("start") int start) {
+		List<Position> positions = new ArrayList<Position>();
+		CollectionResult<Position> result = new CollectionResult<Position>(Lists.newArrayList(positions.iterator()),
+				start, PAGESIZE, true);
+		
+		if (keyword.length() == 0 && location.length() == 0)
+			return ResponseEntity.ok(result);
+		// crawler from Glassdoor
+		// if nothing return
+		// else use spark to filter
 		return ResponseEntity.ok(result);
 	}
 
