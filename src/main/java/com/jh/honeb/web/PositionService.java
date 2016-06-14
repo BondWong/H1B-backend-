@@ -143,9 +143,9 @@ public class PositionService {
 		
 		if (keyword.length() == 0 && location.length() == 0)
 			return ResponseEntity.ok(result);
-		// crawler from Glassdoor
-		// if nothing return
-		// else use spark to filter
+		// crawler from Monster http://www.monster.com/jobs/search/?q=Walmart&where=San-Bruno&page=1
+		// if return "sorry" or 
+		// else use spark to filter each entry (base on name, checkout how spark can do that)
 		return ResponseEntity.ok(result);
 	}
 
